@@ -1,8 +1,13 @@
 [package]
-name = "user-home-dir"
+name = "env-home"
+description = "A simple library to get the user's home directory in a cross-platform way."
+authors = ["Peter Tripp <peter.tripp@gmail.com>"]
+homepage = "https://github.com/notpeter/env-home"
+repository = "https://github.com/notpeter/env-home"
+license = "MIT OR Apache-2.0"
+
 version = "0.1.0"
 edition = "2015"
-license = "MIT OR Apache-2.0"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [dependencies]
