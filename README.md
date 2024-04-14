@@ -1,4 +1,4 @@
-# env-home rust crate
+# env_home rust crate
 
 A Rust crate providing a platform independent method to identify user's home directory
 using environment variables: `HOME` in Unix and `USERPROFILE` in Windows.
@@ -49,7 +49,7 @@ This crate intentionally avoids that complexity and only looks at the environmen
 ## Usage
 
 ```shell
-cargo add env-home
+cargo add env_home
 ```
 
 Crate exports a single function `env_home_dir` that returns `Option<PathBuf>`

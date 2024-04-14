@@ -1,5 +1,5 @@
 [package]
-name = "env-home"
+name = "env_home"
 description = "A simple library to get the user's home directory in a cross-platform way."
 authors = ["Peter Tripp <peter.tripp@gmail.com>"]
 homepage = "https://github.com/notpeter/env-home"

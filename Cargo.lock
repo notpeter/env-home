@@ -3,5 +3,5 @@
 version = 3
 
 [[package]]
-name = "env-home"
+name = "env_home"
 version = "0.1.0"
