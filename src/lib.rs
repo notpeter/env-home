@@ -8,6 +8,17 @@
 //! provided by the Rust Standard Library which was
 //! [deprecated](https://doc.rust-lang.org/std/env/fn.home_dir.html#deprecation)
 //! in Rust 1.29.0 (Sept 2018).
+//!
+//! ## Usage
+//! ```rust
+//! use env_home::env_home_dir as home_dir;
+//! fn main() {
+//!     match home_dir() {
+//!         Some(path) => println!("User home directory: {}", path.display()),
+//!         None => println!("No home found. HOME/USERPROFILE not set or empty"),
+//!     }
+//! }
+//! ```
 
 use std::env;
 use std::path::PathBuf;
