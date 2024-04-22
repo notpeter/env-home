@@ -1,16 +1,19 @@
 # env_home rust crate
 
-A Rust crate providing a platform independent method to identify user's home directory
-using environment variables: `HOME` in Unix and `USERPROFILE` in Windows.
+A pure-Rust crate providing a platform independent method to identify a
+user's home directory via environment variables with no external dependencies.
+
+Checks `HOME` on Unix and `USERPROFILE` on Windows.
 
 ## Description
 
-This can be used as drop-in replacement for the deprecated `std::env::home_dir`
-from the rust standard library -- if you have HOME or USERPROFILE set appropriately.
+This can be used as drop-in replacement for
+[`std::env::home_dir` (deprecated)](https://doc.rust-lang.org/std/env/fn.home_dir.html)
+from the rust standard library.
 
-Unlike [`std::env::home_dir`](https://doc.rust-lang.org/std/env/fn.home_dir.html)
-in the standard library this crate only looks at enviornment variables
-and does not fallback to other platform specific APIs when they are unset.
+Unlike `std::env::home_dir` this crate **only** looks at enviornment variables
+and does attempt to fallback on platform specific APIs. As a result implementation
+of `env_home_dir` is [very simple](src/lib.rs) with no dependencies on other crates.
 
 This functionality is comparable to Golang's [os.UserHomeDir()](https://pkg.go.dev/os#UserHomeDir)
 or Python's [Path.home()](https://docs.python.org/3/library/pathlib.html#pathlib.Path.home).
@@ -19,14 +22,14 @@ or Python's [Path.home()](https://docs.python.org/3/library/pathlib.html#pathlib
 
 The API of this crate is a single function `env_home_dir`
 which attempts to fetch a user's home directory from environment variables
-in a platform independant way supporting Windows and Unix (Linux/MacOS/BSD/WSLetc).
+in a platform independant way supporting Windows and Unix (Linux/MacOS/BSD/WSL, etc).
 
-| Platform                          | Environment Variable | Example          |
-| --------------------------------- | -------------------- | ---------------- |
-| Unix                              | `HOME`               | `/home/user`     |
-| Windows                           | `USERPROFILE`        | `C:\\Users\user` |
-| Windows Subsystem for Linux (WSL) | `HOME`               | `/home/user`     |
-| WASM                              | N/A                  | None             |
+| Platform                          | Environment Variable | Example           |
+| --------------------------------- | -------------------- | ----------------- |
+| Unix                              | `HOME`               | `/home/user`      |
+| Windows                           | `USERPROFILE`        | `C:\\Users\\user` |
+| Windows Subsystem for Linux (WSL) | `HOME`               | `/home/user`      |
+| WASM                              | N/A                  | None              |
 
 1. If the environment variable is unset, `None` is returned.
 2. If the environment variable is set to an empty string, `None` is returned.
@@ -55,7 +58,7 @@ fn main() {
 ```
 
 See the [std::path::PathBuf documentation](https://doc.rust-lang.org/std/path/struct.PathBuf.html)
-for more information on how to use `PathBuf` objects: `.push("subdir")`, `.as_path().`, etc.
+for more information on how to use `PathBuf` objects.
 
 ## Differences with `std::env::home_dir`
 
@@ -67,18 +70,18 @@ was trying to be too smart. It calls Platform specific APIs like
 ([GetUserProfileDirectoryW](https://learn.microsoft.com/en-us/windows/win32/api/userenv/nf-userenv-getuserprofiledirectoryw)
 on Windows or [getpwuid_r](https://linux.die.net/man/3/getpwuid_r) on Unix
 as a fallback when `HOME` or `USERPROFILE` environment variables are not set.
-We just return `None` and give up.
+We just give up and return `None`.
 
 This crate exists because the behavior of
 [`home_dir`](https://doc.rust-lang.org/std/env/fn.home_dir.html)
 provided by the standard library may be unexpected on Windows.
 And thus was
 [deprecated](https://doc.rust-lang.org/std/env/fn.home_dir.html#deprecation)
-and has remained "broken" since Rust 1.29.0 (Sept 2018).
+and has remained broken / unfixed since Rust 1.29.0 (Sept 2018).
 
-## `home` crate alternative
+## As an alternative to the `home` crate
 
-Although many projects have switched from `std::env::home_dir` to `home:home_dir` provided
+Although many projects have switched from `std::env::home_dir` to `home::home_dir` provided
 by the [home](https://crates.io/crates/home) crate because it was maintained by the cargo team
 and thus presumably more "official". The Cargo team has clarified that the `home` crate is
 not intended for general use:
@@ -90,7 +93,7 @@ not intended for general use:
 As a result the `home` crate refuses to compile for WASM target and they have have no plans to fix this.
 
 env_home crate implements a fallback no-op which returns `None`
-non-windows / non-unix platforms like WASM.
+on non-windows / non-unix platforms like WASM.
 
 ## Other Notes
 
