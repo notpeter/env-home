@@ -1,13 +1,16 @@
 # env_home rust crate
 
-A pure-Rust crate providing a platform independent method to identify a
-user's home directory via environment variables with no external dependencies.
+A pure-Rust crate for determining user home directories via environment variables
+in a platform independent manor with no external dependencies.
 
 Checks `HOME` on Unix and `USERPROFILE` on Windows.
 
 ## Description
 
-This can be used as drop-in replacement for
+env_home is a general purpose crate for determining the current user
+home directory via enviornment variables.
+
+It can be used as drop-in replacement for
 [`std::env::home_dir` (deprecated)](https://doc.rust-lang.org/std/env/fn.home_dir.html)
 from the rust standard library.
 
@@ -26,10 +29,10 @@ in a platform independant way supporting Windows and Unix (Linux/MacOS/BSD/WSL, 
 
 | Platform                          | Environment Variable | Example           |
 | --------------------------------- | -------------------- | ----------------- |
-| Unix                              | `HOME`               | `/home/user`      |
-| Windows                           | `USERPROFILE`        | `C:\\Users\\user` |
+| MacOS, Linux or other Unix        | `HOME`               | `/home/user`      |
 | Windows Subsystem for Linux (WSL) | `HOME`               | `/home/user`      |
-| WASM                              | N/A                  | None              |
+| Windows Native                    | `USERPROFILE`        | `C:\\Users\\user` |
+| Others (WASM, etc)                | N/A                  | None              |
 
 1. If the environment variable is unset, `None` is returned.
 2. If the environment variable is set to an empty string, `None` is returned.
@@ -38,6 +41,8 @@ in a platform independant way supporting Windows and Unix (Linux/MacOS/BSD/WSL, 
 4. If the environment variable is set to a non-empty string, the value is returned as a `PathBuf`.
 
 That's it.
+
+If you need a more full-service crate consider using the [dirs](https://crates.io/crates/dirs) crate.
 
 ## Usage
 
