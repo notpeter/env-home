@@ -60,6 +60,7 @@ pub fn env_home_dir() -> Option<std::path::PathBuf> {
     None
 }
 
+#[cfg(any(unix, windows))]
 #[cfg(test)]
 mod tests {
     use super::env_home_dir;
@@ -82,7 +83,6 @@ mod tests {
     */
 
     #[test]
-    #[cfg(any(unix, windows))]
     fn env_home_test() {
         let home_var = if cfg!(windows) { "USERPROFILE" } else { "HOME" };
         let old = std::env::var(home_var).unwrap();
