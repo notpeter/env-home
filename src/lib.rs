@@ -14,7 +14,7 @@ pub fn env_home_dir() -> Option<PathBuf> {
 pub fn env_home_dir() -> Option<PathBuf> {
     let home = env::var("USERPROFILE");
     match home {
-        Some(val) if !val.is_empty() => PathBuf::from(val),
+        Ok(val) if !val.is_empty() => Some(PathBuf::from(val)),
         _ => None,
     }
 }
@@ -48,10 +48,11 @@ mod tests {
     #[test]
     #[cfg(any(unix, windows))]
     fn env_home_test() {
-        let home_var = match env::consts::OS {
-            "windows" => "USERPROFILE",
-            _ => "HOME",
-        };
+        let home_var = if cfg!(windows) {
+            "USERPROFILE"
+          } else {
+            "HOME"
+          };
         let old = std::env::var(home_var).unwrap();
 
         // Sanity checks
@@ -66,10 +67,11 @@ mod tests {
         env::set_var(home_var, "");
         assert_eq!(env_home_dir(), None);
 
-        // Test a sensible unix value
-        std::env::set_var("HOME", "/tmp");
-        assert_eq!(env_home_dir(), Some(std::path::PathBuf::from("/tmp")));
+        // Tests a sensible platform specific home directory.
+        let temp_dir = if cfg!(windows) { "C:\\temp" } else { "/tmp" };
+        std::env::set_var(home_var, temp_dir);
+        assert_eq!(env_home_dir(), Some(std::path::PathBuf::from(temp_dir)));
 
-        env::set_var("USERPROFILE", old);
+        env::set_var(home_var, old);
     }
 }

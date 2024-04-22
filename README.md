@@ -57,7 +57,7 @@ Crate exports a single function `env_home_dir` that returns `Option<PathBuf>`
 ```rust
 use env_home::env_home_dir;
 fn main() {
-    match user_home_dir() {
+    match env_home_dir() {
         Some(path) => println!("User home directory: {}", path.display()),
         None => println!("No home found. HOME/USERPROFILE not set or empty"),
     }
