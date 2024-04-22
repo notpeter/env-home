@@ -1,6 +1,6 @@
 // Copyright 2024 Peter Tripp
 //! env_home is a general purpose crate for determining the current user
-//! home directory in a platform independant manor via enviornment variables.
+//! home directory in a platform independant manner via enviornment variables.
 //!
 //! This crate is implemented in pure-rust and has no external dependencies.
 //!

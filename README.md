@@ -1,20 +1,20 @@
 # env_home rust crate
 
 A pure-Rust crate for determining user home directories via environment variables
-in a platform independent manor with no external dependencies.
+in a platform independent manner with no external dependencies.
 
-Checks `HOME` on Unix and `USERPROFILE` on Windows.
+Check `HOME` on Unix and `USERPROFILE` on Windows.
 
 ## Description
 
 env_home is a general purpose crate for determining the current user
-home directory via enviornment variables.
+home directory via environment variables.
 
 It can be used as drop-in replacement for
 [`std::env::home_dir` (deprecated)](https://doc.rust-lang.org/std/env/fn.home_dir.html)
 from the rust standard library.
 
-Unlike `std::env::home_dir` this crate **only** looks at enviornment variables
+Unlike `std::env::home_dir` this crate **only** looks at environment variables
 and does attempt to fallback on platform specific APIs. As a result implementation
 of `env_home_dir` is [very simple](src/lib.rs) with no dependencies on other crates.
 
@@ -25,7 +25,7 @@ or Python's [Path.home()](https://docs.python.org/3/library/pathlib.html#pathlib
 
 The API of this crate is a single function `env_home_dir`
 which attempts to fetch a user's home directory from environment variables
-in a platform independant way supporting Windows and Unix (Linux/MacOS/BSD/WSL, etc).
+in a platform independent way supporting Windows and Unix (Linux/MacOS/BSD/WSL, etc).
 
 | Platform                          | Environment Variable | Example           |
 | --------------------------------- | -------------------- | ----------------- |
