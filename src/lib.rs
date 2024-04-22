@@ -1,3 +1,4 @@
+// Copyright 2024 Peter Tripp
 use std::env;
 use std::path::PathBuf;
 
@@ -48,11 +49,7 @@ mod tests {
     #[test]
     #[cfg(any(unix, windows))]
     fn env_home_test() {
-        let home_var = if cfg!(windows) {
-            "USERPROFILE"
-          } else {
-            "HOME"
-          };
+        let home_var = if cfg!(windows) { "USERPROFILE" } else { "HOME" };
         let old = std::env::var(home_var).unwrap();
 
         // Sanity checks
