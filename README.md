@@ -56,8 +56,8 @@ Crate exports a single function `env_home_dir` that returns `Option<PathBuf>`
 use env_home::env_home_dir as home_dir;
 fn main() {
     match home_dir() {
-        Some(path) => println!("User home directory: {}", path.display()),
-        None => println!("No home found. HOME/USERPROFILE not set or empty"),
+        Some(path) => eprintln!("User home directory: {}", path.display()),
+        None => eprintln!("No home found. HOME/USERPROFILE not set or empty"),
     }
 }
 ```
