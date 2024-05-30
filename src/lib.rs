@@ -20,6 +20,8 @@
 //! }
 //! ```
 
+use std::path::PathBuf;
+
 #[cfg(unix)]
 /// Returns the path of the current user’s home directory if known.
 ///
@@ -36,27 +38,27 @@
 ///
 /// This function returns `None` when the environment variable is set but empty.
 /// Those implementations return the empty string `""` instead.
-pub fn env_home_dir() -> Option<std::path::PathBuf> {
+pub fn env_home_dir() -> Option<PathBuf> {
     let home = std::env::var("HOME");
     match home {
-        Ok(val) if !val.is_empty() => Some(std::path::PathBuf::from(val)),
+        Ok(val) if !val.is_empty() => Some(PathBuf::from(val)),
         _ => None,
     }
 }
 
 #[cfg(windows)]
 /// Returns the path of the current user’s home directory if known.
-pub fn env_home_dir() -> Option<std::path::PathBuf> {
+pub fn env_home_dir() -> Option<PathBuf> {
     let home = std::env::var("USERPROFILE");
     match home {
-        Ok(val) if !val.is_empty() => Some(std::path::PathBuf::from(val)),
+        Ok(val) if !val.is_empty() => Some(PathBuf::from(val)),
         _ => None,
     }
 }
 
 #[cfg(all(not(windows), not(unix)))]
 /// Returns the path of the current user’s home directory if known.
-pub fn env_home_dir() -> Option<std::path::PathBuf> {
+pub fn env_home_dir() -> Option<PathBuf> {
     None
 }
 
@@ -73,6 +75,7 @@ mod tests {
     use `cargo test -- --test-threads=1`.
 
     More info:
+    - https://github.com/rust-lang/rust/issues/124866
     - https://doc.rust-lang.org/std/env/fn.set_var.html
     - https://github.com/rust-lang/rust/issues/27970
 
@@ -85,7 +88,7 @@ mod tests {
     #[test]
     fn env_home_test() {
         let home_var = if cfg!(windows) { "USERPROFILE" } else { "HOME" };
-        let old = std::env::var(home_var).unwrap();
+        let old = env::var(home_var).unwrap();
 
         // Sanity checks
         assert_ne!(env_home_dir(), None, "HOME/USERPROFILE is unset");
@@ -96,14 +99,23 @@ mod tests {
         assert_eq!(env_home_dir(), None);
 
         // Test when var set to empty string
-        env::set_var(home_var, "");
+        #[allow(unused_unsafe)]
+        unsafe {
+            env::set_var(home_var, "");
+        }
         assert_eq!(env_home_dir(), None);
 
         // Tests a sensible platform specific home directory.
         let temp_dir = if cfg!(windows) { "C:\\temp" } else { "/tmp" };
-        std::env::set_var(home_var, temp_dir);
-        assert_eq!(env_home_dir(), Some(std::path::PathBuf::from(temp_dir)));
+        #[allow(unused_unsafe)]
+        unsafe {
+            env::set_var(home_var, temp_dir);
+        }
+        assert_eq!(env_home_dir(), Some(PathBuf::from(temp_dir)));
 
-        env::set_var(home_var, old);
+        #[allow(unused_unsafe)]
+        unsafe {
+            env::set_var(home_var, old);
+        }
     }
 }
