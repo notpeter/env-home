@@ -3,34 +3,47 @@
 use std::path::PathBuf;
 
 #[cfg(unix)]
-/// Returns the path of the current user’s home directory if known.
-pub fn env_home_dir() -> Option<PathBuf> {
-    let home = std::env::var("HOME");
-    match home {
-        Ok(val) if !val.is_empty() => Some(PathBuf::from(val)),
-        _ => None,
-    }
-}
+mod unix;
+
+#[cfg(unix)]
+use crate::unix as sys;
 
 #[cfg(windows)]
-/// Returns the path of the current user’s home directory if known.
-pub fn env_home_dir() -> Option<PathBuf> {
-    let home = std::env::var("USERPROFILE");
-    match home {
-        Ok(val) if !val.is_empty() => Some(PathBuf::from(val)),
-        _ => None,
-    }
-}
+mod windows;
+
+#[cfg(windows)]
+use crate::windows as sys;
 
 #[cfg(all(not(windows), not(unix)))]
-/// Returns the path of the current user’s home directory if known.
-pub fn env_home_dir() -> Option<PathBuf> {
-    None
+mod other;
+
+#[cfg(all(not(windows), not(unix)))]
+use crate::other as sys;
+
+/// Returns the path of the current user’s home directory.
+/// On Unix, it returns the value of the `HOME` environment variable.
+/// On Windows, it returns the value of the `USERPROFILE` environment variable.
+pub fn user_home_dir() -> Option<PathBuf> {
+    sys::home_dir()
+}
+
+/// Returns the path of the current user’s config directory.
+/// On Unix use `XDG_CONFIG_HOME` if set, otherwise `$HOME/.config`.
+/// On Windows use `XDG_CONFIG_HOME` if set, otherwise `%APPDATA%`
+pub fn user_config_dir() -> Option<PathBuf> {
+    sys::config_dir()
+}
+
+/// Returns the path of the current user’s cache directory.
+/// On Unix use `XDG_CACHE_HOME` if set, otherwise `$HOME/.cache`.
+/// On Windows use `XDG_CACHE_HOME` if set, otherwise `%LOCALAPPDATA%`
+pub fn user_cache_dir() -> Option<PathBuf> {
+    sys::cache_dir()
 }
 
 #[cfg(test)]
 mod tests {
-    use super::env_home_dir;
+    use super::user_home_dir;
     use std::env;
     use std::path::PathBuf;
 
@@ -57,19 +70,19 @@ mod tests {
         let old = env::var(home_var).unwrap();
 
         // Sanity checks
-        assert_ne!(env_home_dir(), None, "HOME/USERPROFILE is unset");
-        assert_eq!(env_home_dir(), Some(PathBuf::from(old.clone())));
+        assert_ne!(user_home_dir(), None, "HOME/USERPROFILE is unset");
+        assert_eq!(user_home_dir(), Some(PathBuf::from(old.clone())));
 
         // Test when var unset.
         env::remove_var(home_var);
-        assert_eq!(env_home_dir(), None);
+        assert_eq!(user_home_dir(), None);
 
         // Test when var set to empty string
         #[allow(unused_unsafe)]
         unsafe {
             env::set_var(home_var, "");
         }
-        assert_eq!(env_home_dir(), None);
+        assert_eq!(user_home_dir(), None);
 
         // Tests a sensible platform specific home directory.
         let temp_dir = if cfg!(windows) { "C:\\temp" } else { "/tmp" };
@@ -77,7 +90,7 @@ mod tests {
         unsafe {
             env::set_var(home_var, temp_dir);
         }
-        assert_eq!(env_home_dir(), Some(PathBuf::from(temp_dir)));
+        assert_eq!(user_home_dir(), Some(PathBuf::from(temp_dir)));
 
         #[allow(unused_unsafe)]
         unsafe {
