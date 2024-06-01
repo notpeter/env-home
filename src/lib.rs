@@ -2,11 +2,17 @@
 
 use std::path::PathBuf;
 
-#[cfg(unix)]
+#[cfg(all(unix, not(target_os = "macos")))]
 mod unix;
 
-#[cfg(unix)]
+#[cfg(all(unix, not(target_os = "macos")))]
 use crate::unix as sys;
+
+#[cfg(all(unix, target_os = "macos"))]
+mod mac;
+
+#[cfg(all(unix, target_os = "macos"))]
+use crate::mac as sys;
 
 #[cfg(windows)]
 mod windows;
