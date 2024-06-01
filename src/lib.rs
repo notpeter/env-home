@@ -27,6 +27,7 @@ mod other;
 use crate::other as sys;
 
 /// Returns the path of the current user’s home directory.
+/// On Mac, it returns the value of the `HOME` environment variable.
 /// On Unix, it returns the value of the `HOME` environment variable.
 /// On Windows, it returns the value of the `USERPROFILE` environment variable.
 pub fn user_home_dir() -> Option<PathBuf> {
@@ -34,6 +35,7 @@ pub fn user_home_dir() -> Option<PathBuf> {
 }
 
 /// Returns the path of the current user’s config directory.
+/// On Mac use `XDG_CONFIG_HOME` if set, `$HOME/Library/Application Support`.
 /// On Unix use `XDG_CONFIG_HOME` if set, otherwise `$HOME/.config`.
 /// On Windows use `XDG_CONFIG_HOME` if set, otherwise `%APPDATA%`
 pub fn user_config_dir() -> Option<PathBuf> {
@@ -41,6 +43,7 @@ pub fn user_config_dir() -> Option<PathBuf> {
 }
 
 /// Returns the path of the current user’s cache directory.
+/// On Mac use `XDG_CACHE_HOME` if set, otherwise `$HOME/Library/Caches`.
 /// On Unix use `XDG_CACHE_HOME` if set, otherwise `$HOME/.cache`.
 /// On Windows use `XDG_CACHE_HOME` if set, otherwise `%LOCALAPPDATA%`
 pub fn user_cache_dir() -> Option<PathBuf> {
